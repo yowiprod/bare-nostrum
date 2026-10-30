@@ -356,11 +356,18 @@
     .tab:hover { color: rgba(248,242,229,.6); }
     .tab.on { color: var(--cream); border-bottom-color: var(--cream); }
 
-    .cat-panel { display: none; }
-    .cat-panel.on {
+    .cat-panel {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      margin-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding-bottom: 2rem;
     }
+    .cat-panel .cat-img-wrap {
+      grid-column: 1 / -1;
+      margin-bottom: 1.5rem;
+    }
+    .tabs { display: none; }
     .dish {
       padding: 2rem 2.4rem;
       border: 1px solid rgba(248,242,229,.06);
