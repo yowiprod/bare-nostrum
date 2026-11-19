@@ -658,6 +658,37 @@
       font-size: .85rem; font-weight: 300; letter-spacing: .14em; text-transform: uppercase;
       pointer-events: none;
     }
+
+  /* ── Lightbox ── */
+  #lb-overlay {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(3,9,13,.92); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center;
+    cursor: zoom-out;
+  }
+  #lb-overlay.open { display: flex; }
+  #lb-box {
+    position: relative; max-width: min(90vw, 700px); max-height: 90vh;
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    cursor: default;
+  }
+  #lb-img {
+    max-width: 100%; max-height: 75vh;
+    border-radius: 6px; object-fit: contain;
+    box-shadow: 0 20px 60px rgba(0,0,0,.7);
+  }
+  #lb-name {
+    font-family: var(--sans); font-weight: 200; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--cream); font-size: .95rem;
+  }
+  #lb-close {
+    position: absolute; top: -2rem; right: 0;
+    background: none; border: none; color: var(--cream);
+    font-size: 1.6rem; line-height: 1; cursor: pointer; opacity: .7;
+  }
+  #lb-close:hover { opacity: 1; }
+  .dish-thumb { cursor: zoom-in; transition: opacity .2s; }
+  .dish-thumb:hover { opacity: .82; }
   </style>
 </head>
 <body>
@@ -968,6 +999,53 @@
   setTimeout(function(){
     document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
   }, 2000);
+})();
+</script>
+
+<!-- Lightbox -->
+<div id="lb-overlay" role="dialog" aria-modal="true">
+  <div id="lb-box">
+    <button id="lb-close" aria-label="Tancar">&#x2715;</button>
+    <img id="lb-img" src="" alt="">
+    <div id="lb-name"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var overlay = document.getElementById('lb-overlay');
+  var lbImg   = document.getElementById('lb-img');
+  var lbName  = document.getElementById('lb-name');
+
+  function hdUrl(src) {
+    // Pexels: swap thumbnail params for 800px wide
+    src = src.replace(/w=120&h=120&dpr=1/, 'w=800&h=600&dpr=1');
+    // Unsplash: swap thumbnail params for 800px wide
+    src = src.replace(/w=120&h=120&fit=crop&crop=center&q=75/, 'w=800&h=600&fit=crop&crop=center&q=90');
+    return src;
+  }
+
+  function open(thumb) {
+    lbImg.src = hdUrl(thumb.src);
+    lbImg.alt = thumb.alt;
+    lbName.textContent = thumb.alt;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+  }
+
+  document.querySelectorAll('.dish-thumb').forEach(function(img) {
+    img.addEventListener('click', function(e) { e.stopPropagation(); open(img); });
+  });
+
+  overlay.addEventListener('click', close);
+  document.getElementById('lb-box').addEventListener('click', function(e){ e.stopPropagation(); });
+  document.getElementById('lb-close').addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
 })();
 </script>
 </body>
